@@ -17,19 +17,19 @@ resource "aws_security_group" "grafana_sg" {
   ingress {
     from_port   = 443
     to_port     = 443
-    protocol    = "https"
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
     from_port   = 3000
     to_port     = 3000
-    protocol    = "grafana"
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
     from_port   = 9000
     to_port     = 9000
-    protocol    = "prometheus"
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }  
   egress {
@@ -61,6 +61,11 @@ resource "local_file" "Grafana_key" {
   filename = "Grafana_server_key.pem"
   file_permission = "400"
   directory_permission = "400"
+}
+
+# Import the Ubuntu_AMI module
+module "ubuntu_ami" {
+  source = "../modules/ec2_amis"
 }
 
 # Create an AWS EC2 instance for Grafana server
