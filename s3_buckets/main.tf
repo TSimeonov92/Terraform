@@ -1,5 +1,7 @@
 # Manage multiple S3 buckets with a single resource
 # Example using count
+# Test change to trigger pipeline
+
 
 resource "aws_s3_bucket" "veeam_backup_buckets_eu_west_1" {
   count         = length(var.s3_bucket_names) //count will be 3
