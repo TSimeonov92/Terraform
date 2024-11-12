@@ -28,6 +28,10 @@ jobs:
       with:
         terraform_version: 1.4.5  # Specify the required Terraform version
 
+    # Clear AWS Cached credentials
+    - name: Clear AWS Credentials Cache
+      run: rm -rf ~/.aws/credentials        
+
     # Set AWS credentials
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
