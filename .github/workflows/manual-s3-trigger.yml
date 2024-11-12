@@ -1,0 +1,80 @@
+name: Terraform S3 Bucket Manual Pipeline Management
+
+on:
+  # Manual trigger for running the workflow
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Select the Terraform action to execute'
+        required: true
+        default: 'plan'
+        type: choice
+        options:
+          - plan       # Only create a plan
+          - apply      # Apply changes to create/update resources
+          - destroy    # Destroy all resources
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    environment: production  # or staging, if needed
+
+    steps:
+    # Checkout the repository
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    # Set up Terraform
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.4.5
+
+    # Configure AWS Credentials
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+    # Initialize Terraform
+    - name: Terraform Init
+      working-directory: ./s3_buckets
+      run: terraform init
+
+    # Conditional steps based on selected action
+    - name: Terraform Plan
+      if: ${{ github.event.inputs.action == 'plan' }}
+      working-directory: ./s3_buckets
+      run: terraform plan -out=tfplan
+      env:
+        TF_VAR_aws_region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+    - name: Upload Plan Artifact
+      if: ${{ github.event.inputs.action == 'plan' }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: tfplan
+        path: ./s3_buckets/tfplan
+
+    - name: Terraform Apply
+      if: ${{ github.event.inputs.action == 'apply' }}
+      working-directory: ./s3_buckets
+      run: terraform apply -auto-approve tfplan
+      env:
+        TF_VAR_aws_region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+    - name: Terraform Destroy Plan
+      if: ${{ github.event.inputs.action == 'destroy' }}
+      working-directory: ./s3_buckets
+      run: terraform plan -destroy -out=tfplan
+      env:
+        TF_VAR_aws_region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+    - name: Confirm and Apply Destroy
+      if: ${{ github.event.inputs.action == 'destroy' }}
+      working-directory: ./s3_buckets
+      run: terraform apply -auto-approve tfplan
+      env:
+        TF_VAR_aws_region: ${{ secrets.AWS_DEFAULT_REGION }}
