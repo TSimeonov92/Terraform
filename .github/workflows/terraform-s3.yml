@@ -51,7 +51,7 @@ jobs:
       working-directory: ./s3_buckets
       run: terraform validate
 
-    # Terraform Plan
+    # Terraform Plan step
     - name: Terraform Plan
       working-directory: ./s3_buckets
       id: plan
@@ -67,7 +67,7 @@ jobs:
         name: tfplan
         path: ./s3_buckets/tfplan
 
-    # Terraform Apply (requires manual approval in Pull Requests)
+    # Terraform Apply (requires manual approval in Pull Requests) 
     - name: Terraform Apply
       if: github.ref == 'refs/heads/main'
       working-directory: ./s3_buckets
