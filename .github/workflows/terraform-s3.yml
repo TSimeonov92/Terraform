@@ -62,7 +62,7 @@ jobs:
     # Save the Terraform Plan as an artifact (optional, for inspection)
     - name: Upload Plan Artifact
       if: always()
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: tfplan
         path: ./s3_buckets/tfplan
