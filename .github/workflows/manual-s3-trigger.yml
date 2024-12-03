@@ -43,7 +43,7 @@ jobs:
       working-directory: ./s3_buckets
       run: terraform init
 
-    # Terraform Plan and Save Plan as Artifact
+    # Conditional steps based on selected action
     - name: Terraform Plan
       if: ${{ github.event.inputs.action == 'plan' }}
       working-directory: ./s3_buckets
@@ -58,22 +58,13 @@ jobs:
         name: tfplan
         path: ./s3_buckets/tfplan
 
-    # Download Plan Artifact and Apply
-    - name: Download Plan Artifact
-      if: ${{ github.event.inputs.action == 'apply' }}
-      uses: actions/download-artifact@v3
-      with:
-        name: tfplan
-        path: ./s3_buckets  # Download to the same directory
-
     - name: Terraform Apply
       if: ${{ github.event.inputs.action == 'apply' }}
       working-directory: ./s3_buckets
-      run: terraform apply -auto-approve tfplan
+      run: terraform apply -auto-approve -input=false
       env:
         TF_VAR_aws_region: ${{ secrets.AWS_DEFAULT_REGION }}
 
-    # Destroy Resources
     - name: Terraform Destroy Plan
       if: ${{ github.event.inputs.action == 'destroy' }}
       working-directory: ./s3_buckets
