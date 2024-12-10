@@ -1,4 +1,4 @@
-name: 'Deploy S3 buckets with manual trigger'
+name: Deploy S3 buckets with manual trigger
 
 on:
   workflow_dispatch:
