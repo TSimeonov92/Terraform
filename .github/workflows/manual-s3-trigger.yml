@@ -40,10 +40,9 @@ jobs:
 
     # Restore Terraform State File
     - name: Restore Terraform State
-      uses: actions/download-artifact@v3
-      with:
-        name: terraform-state
-        path: ./s3_buckets/
+      if: ${{ github.event.inputs.action != 'plan' || github.event.inputs.action != 'apply' || github.event.inputs.action != 'destroy' }}
+      run: |
+        echo "No terraform state found; proceeding with empty state"
 
     # Initialize Terraform
     - name: Terraform Init
