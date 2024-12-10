@@ -5,7 +5,7 @@ on:
     inputs:
       tfvars_file:
         description: 'Path to the .tfvars file'
-        required: true
+        required: false
         default: './s3_buckets/variables.tf'
       action:
         type: choice
@@ -131,16 +131,16 @@ jobs:
       working-directory: ./s3_buckets
       # Generates an execution plan for Terraform
       run: |
-        terraform plan -var-file=${{ github.event.inputs.tfvars_file }} -input=false
+        terraform plan -input=false
 
     
       # Apply the Terraform Configuration according to the parameter
     - name: Terraform Action
       if: ${{ github.event.inputs.action  == 'apply' }}
       working-directory: ./s3_buckets
-      run: terraform ${{ github.event.inputs.action }} -auto-approve -var-file=${{ github.event.inputs.tfvars_file }} -input=false
+      run: terraform ${{ github.event.inputs.action }} -auto-approve  -input=false
 
     - name: Terraform Destroy
       if: ${{ github.event.inputs.action == 'destroy' }}
       working-directory: ./s3_buckets
-      run: terraform ${{ github.event.inputs.action }} -auto-approve -var-file=${{ github.event.inputs.tfvars_file }} -input=false
+      run: terraform ${{ github.event.inputs.action }} -auto-approve  -input=false
