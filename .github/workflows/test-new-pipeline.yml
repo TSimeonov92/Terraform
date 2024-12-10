@@ -6,7 +6,7 @@ on:
       tfvars_file:
         description: 'Path to the .tfvars file'
         required: true
-        default: 'variables.tfvars'
+        default: './s3_buckets/variables.tf'
       action:
         type: choice
         description: 'Apply or Destroy'
@@ -18,7 +18,7 @@ on:
         default: 'apply'
 
 env:
-      AWS_REGION: us-east-1
+      AWS_REGION: eu-west-1
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
@@ -38,7 +38,7 @@ jobs:
         working-directory: ./s3_buckets
 
     env:
-      AWS_REGION: us-east-1
+      AWS_REGION: eu-west-1
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     
