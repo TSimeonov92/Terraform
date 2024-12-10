@@ -38,6 +38,13 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
+    # Restore Terraform State File
+    - name: Restore Terraform State
+      uses: actions/download-artifact@v3
+      with:
+        name: terraform-state
+        path: ./s3_buckets/
+
     # Initialize Terraform
     - name: Terraform Init
       working-directory: ./s3_buckets
@@ -78,3 +85,11 @@ jobs:
       run: terraform apply -auto-approve tfplan
       env:
         TF_VAR_aws_region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+    # Save Terraform State File
+    - name: Save Terraform State
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: terraform-state
+        path: ./s3_buckets/terraform.tfstate
