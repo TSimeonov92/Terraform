@@ -7,8 +7,8 @@ variable "s3_bucket_names" {
   type = list(string)
   default = [
     "customer1-prd-veeam-backup",
-    #"customer2-prd-veeam-backup",
-    #"customer3-prd-veeam-backup"
+    "customer2-prd-veeam-backup",
+    "customer3-prd-veeam-backup"
   ]
 }
 
